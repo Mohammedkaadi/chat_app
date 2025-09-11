@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>غرفة الدردشة</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</head>
+<body>
+    <h2>مرحباً {{ username }}</h2>
+    <a href="/logout">تسجيل الخروج</a>
+
+    <input type="text" id="room" placeholder="اسم الغرفة">
+    <button onclick="joinRoom()">انضم</button>
+    <button onclick="leaveRoom()">غادر</button>
+
+    <div id="chat-box"></div>
+
+    <input type="text" id="message" placeholder="اكتب رسالة...">
+    <button onclick="sendMessage()">إرسال</button>
+</body>
+</html>
