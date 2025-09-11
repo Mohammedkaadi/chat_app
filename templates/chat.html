@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>ChatWave Pro</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="theme-light">
+  <div class="topbar">
+    <div class="left"><a href="/profile">الملف</a></div>
+    <div class="center">ChatWave Pro</div>
+    <div class="right">
+      <button id="themeToggle" title="Toggle theme">🌓</button>
+      <a href="/logout">تسجيل خروج</a>
+    </div>
+  </div>
+  <main class="chat-page">
+    <aside class="sidebar">
+      <div class="profile-mini">
+        <div class="avatar-mini">{% if avatar %}<img src="{{ url_for('uploads', filename=avatar) }}" alt="avatar">{% else %}<div class="avatar-placeholder"></div>{% endif %}</div>
+        <div class="meta"><strong>{{ username }}</strong></div>
+      </div>
+      <div class="rooms">
+        <h3>الغرف</h3>
+        <ul id="roomList">{% for r in rooms %}<li data-id="{{ r[0] }}" class="room">{{ r[1] }}</li>{% endfor %}</ul>
+        <form id="createRoom" style="margin-top:12px"><input name="name" placeholder="اسم غرفة"><input name="desc" placeholder="وصف"><button type="submit">إنشاء</button></form>
+      </div>
+      <div class="users">
+        <h3>المتصلون</h3>
+        <ul id="onlineList"></ul>
+      </div>
+    </aside>
+    <section class="chat-area">
+      <div id="messages" class="messages" aria-live="polite"></div>
+      <div id="typing" class="muted" style="padding:6px 12px"></div>
+      <form id="chatForm" class="composer" enctype="multipart/form-data">
+        <div class="left-controls">
+          <button id="emojiBtn" type="button">😊</button>
+          <input id="fileInput" type="file" accept="image/*,application/pdf,text/plain" style="display:none">
+          <button id="attachBtn" type="button">📎</button>
+        </div>
+        <input id="msgInput" placeholder="اكتب رسالة..." autocomplete="off">
+        <button type="submit" class="send">إرسال</button>
+      </form>
+      <div id="emojiPicker" class="emoji-picker" style="display:none"></div>
+    </section>
+  </main>
+  <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

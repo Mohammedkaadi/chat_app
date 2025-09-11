@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>كلمة سر جديدة</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head>
+<body class="theme-light">
+<main class="auth-page">
+  <div class="card" style="max-width:520px;margin:40px auto">
+    <h2>أنشئ كلمة مرور جديدة</h2>
+    {% if message %}<p class="muted">{{ message }}</p>{% endif %}
+    <form method="POST">
+      <input name="password" type="password" placeholder="كلمة المرور الجديدة" required>
+      <button type="submit" class="primary">تعيين</button>
+    </form>
+  </div>
+</main>
+</body></html>
