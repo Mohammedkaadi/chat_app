@@ -1,0 +1,5 @@
+flask
+flask-bcrypt
+flask-socketio
+eventlet
+werkzeug
