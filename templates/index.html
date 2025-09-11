@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>ChatWave Pro</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=2">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script defer src="{{ url_for('static', filename='app.js') }}"></script>
 </head>
 <body>
     <div class="container">
-        <h1>ChatWave Pro</h1>
+        <h1 class="logo">💬 ChatWave Pro</h1>
+        <p class="subtitle">دردشة فورية عصرية وآمنة</p>
 
         <div class="card">
-            <h2>تسجيل الدخول</h2>
-            <form action="/login" method="post">
+            <h2>تسجيل دخول</h2>
+            <form action="/login" method="post" class="form">
                 <input type="text" name="username" placeholder="اسم المستخدم" required>
                 <input type="password" name="password" placeholder="كلمة المرور" required>
                 <button type="submit">دخول</button>
@@ -19,8 +21,8 @@
         </div>
 
         <div class="card">
-            <h2>إنشاء حساب جديد</h2>
-            <form action="/register" method="post">
+            <h2>إنشاء حساب</h2>
+            <form action="/register" method="post" class="form">
                 <input type="text" name="username" placeholder="اسم المستخدم" required>
                 <input type="password" name="password" placeholder="كلمة المرور" required>
                 <input type="email" name="email" placeholder="البريد الإلكتروني" required>
@@ -29,20 +31,20 @@
         </div>
 
         <div class="card">
-            <h2>نسيت كلمة المرور؟</h2>
-            <form action="/forgot" method="post">
+            <h2>إعادة تعيين كلمة المرور</h2>
+            <form action="/forgot" method="post" class="form">
                 <input type="email" name="email" placeholder="أدخل بريدك لإعادة التعيين" required>
-                <button type="submit">إرسال رابط إعادة التعيين</button>
+                <button type="submit" class="secondary">نسيت كلمة المرور؟</button>
             </form>
         </div>
 
         {% with messages = get_flashed_messages() %}
           {% if messages %}
-            <ul class="flash">
+            <div class="flash">
               {% for msg in messages %}
-                <li>{{ msg }}</li>
+                <p>{{ msg }}</p>
               {% endfor %}
-            </ul>
+            </div>
           {% endif %}
         {% endwith %}
     </div>
