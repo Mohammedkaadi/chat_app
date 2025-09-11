@@ -1,0 +1,82 @@
+:root{
+  --accent1:#06b6d4;
+  --accent2:#6366f1;
+  --muted:#6b7280;
+  --card-bg: rgba(255,255,255,0.98);
+}
+
+/* reset خفيف */
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;padding:0;font-family:'Cairo',sans-serif}
+
+/* خلفية تدريجية */
+body{
+  background: linear-gradient(135deg, var(--accent1), var(--accent2));
+  -webkit-font-smoothing:antialiased;
+  color:#0b1220;
+}
+
+/* مركز الصفحة */
+.center{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+
+/* البطاقة */
+.card{
+  width:100%;max-width:420px;background:var(--card-bg);border-radius:14px;padding:24px;
+  box-shadow:0 10px 30px rgba(2,6,23,0.35);
+}
+
+/* الشعار */
+.brand{text-align:center;margin-bottom:14px}
+.brand .logo{font-size:40px;margin-bottom:6px}
+.brand h1{margin:0;font-size:22px}
+.brand .subtitle{margin:6px 0 0;color:var(--muted);font-size:13px}
+
+/* الفورم */
+.form{display:flex;flex-direction:column;gap:12px;margin-top:8px}
+label{font-size:13px;color:var(--muted)}
+input[type="text"]{padding:12px;border-radius:10px;border:1px solid #e6e9ee;font-size:15px;outline:none}
+input[type="text"]:focus{box-shadow:0 8px 24px rgba(6,182,212,0.12);border-color:var(--accent1)}
+.btn{padding:12px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;font-weight:700;cursor:pointer;font-size:15px}
+.btn:hover{opacity:0.98;transform:translateY(-1px);transition:all .14s ease}
+
+/* زر التحميل */
+.download{margin-top:12px;text-align:center}
+.download-btn{display:inline-block;padding:8px 12px;border-radius:10px;background:#fff;color:#0b1220;text-decoration:none;font-weight:600;border:1px solid rgba(0,0,0,0.06)}
+
+/* صفحة الدردشة المؤقتة */
+.app{min-height:100vh;display:flex;flex-direction:column}
+.app-header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:transparent;color:#fff}
+.app-main{flex:1;display:flex;align-items:center;justify-content:center;padding:20px}
+.placeholder{background:rgba(255,255,255,0.06);padding:22px;border-radius:12px;color:#fff;text-align:center;max-width:720px}
+.muted{color:rgba(255,255,255,0.9)}
+.link{color:#fff;text-decoration:none;background:rgba(255,255,255,0.08);padding:8px 12px;border-radius:8px}
+/* واجهة الدردشة */
+.chat-app{display:flex;height:100vh}
+
+/* الشريط الجانبي */
+.sidebar{width:240px;background:#fff;padding:16px;display:flex;flex-direction:column;gap:16px;border-left:1px solid #eee}
+.user-info{display:flex;align-items:center;gap:10px}
+.avatar{font-size:32px}
+.username{font-weight:700}
+.logout{font-size:12px;color:#ef4444;text-decoration:none}
+.section-title{margin:8px 0 0;font-size:14px;color:#6b7280}
+.room-list{list-style:none;padding:0;margin:0}
+.room-list li{padding:8px;border-radius:6px;cursor:pointer}
+.room-list li:hover{background:#f3f4f6}
+.room-list .active{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff}
+
+/* منطقة الدردشة */
+.chat-area{flex:1;display:flex;flex-direction:column;background:#f9fafb}
+.chat-header{padding:14px;border-bottom:1px solid #e6e9ee;background:#fff}
+.messages{flex:1;padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.msg{display:flex}
+.msg.you{justify-content:flex-end}
+.bubble{padding:10px 14px;border-radius:12px;max-width:70%;font-size:14px;line-height:1.4}
+.msg.you .bubble{background:var(--accent1);color:#fff;border-bottom-right-radius:4px}
+.msg.other .bubble{background:#e5e7eb;color:#111;border-bottom-left-radius:4px}
+
+/* صندوق الكتابة */
+.composer{display:flex;gap:8px;padding:12px;border-top:1px solid #e6e9ee;background:#fff}
+#msgInput{flex:1;padding:10px;border:1px solid #ddd;border-radius:10px;font-size:14px}
+#sendBtn{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;color:#fff;padding:10px 16px;border-radius:10px;cursor:pointer;font-weight:600}
+#sendBtn:hover{opacity:0.95}
