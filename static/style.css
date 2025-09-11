@@ -1,0 +1,28 @@
+body {
+    font-family: Tahoma, Arial, sans-serif;
+    background: #f0f4f8;
+    text-align: center;
+    padding: 20px;
+}
+form {
+    margin: 10px auto;
+    padding: 10px;
+    background: #fff;
+    width: 300px;
+    border-radius: 8px;
+    box-shadow: 0 0 5px #ccc;
+}
+input, button {
+    margin: 5px;
+    padding: 8px;
+    width: 90%;
+}
+#chat-box {
+    border: 1px solid #ccc;
+    height: 200px;
+    width: 90%;
+    margin: 10px auto;
+    padding: 5px;
+    overflow-y: scroll;
+    background: #fff;
+}
