@@ -8,7 +8,9 @@ from datetime import datetime
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev_secret_123')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chat.db'
+
+# ✅ استخدم PostgreSQL من Environment Variables
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -89,6 +91,5 @@ if __name__ == '__main__':
     import eventlet
     import eventlet.wsgi
 
-    # ✅ استخدم PORT من Railway بدل 5000 الثابت
     port = int(os.environ.get("PORT", 5000))
     socketio.run(app, host="0.0.0.0", port=port)
