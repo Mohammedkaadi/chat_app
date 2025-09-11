@@ -89,20 +89,6 @@ if __name__ == '__main__':
     import eventlet
     import eventlet.wsgi
 
-    # دالة لجلب IP الموبايل على الشبكة (192.168.x.x)
-    def get_ip():
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        try:
-            s.connect(("8.8.8.8", 80))
-            ip = s.getsockname()[0]
-        finally:
-            s.close()
-        return ip
-
-    local_ip = get_ip()
-
-    print("\n🚀 السيرفر شغال!")
-    print(f"من نفس الجهاز:  http://127.0.0.1:5000")
-    print(f"من الشبكة (أجهزة ثانية):  http://{local_ip}:5000\n")
-
-    socketio.run(app, host="0.0.0.0", port=5000, debug=True)
+    # ✅ استخدم PORT من Railway بدل 5000 الثابت
+    port = int(os.environ.get("PORT", 5000))
+    socketio.run(app, host="0.0.0.0", port=port)
