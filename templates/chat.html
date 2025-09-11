@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>الدردشة — ChatApp</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css" />
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+  <div class="chat-app">
+    <aside class="sidebar">
+      <div class="user-info">
+        <div class="avatar">👤</div>
+        <div>
+          <div class="username">{{ username }}</div>
+          <a href="/logout" class="logout">تسجيل خروج</a>
+        </div>
+      </div>
+      <h3 class="section-title">الغرف</h3>
+      <ul class="room-list" id="roomList">
+        <li class="active" data-room="عام">عام</li>
+        <li data-room="أصدقاء">أصدقاء</li>
+        <li data-room="دراسة">دراسة</li>
+      </ul>
+    </aside>
+
+    <main class="chat-area">
+      <header class="chat-header">
+        <h2 id="roomTitle">عام</h2>
+      </header>
+
+      <div class="messages" id="messages"></div>
+
+      <div class="composer">
+        <input id="msgInput" type="text" placeholder="اكتب رسالة..." />
+        <button id="sendBtn">إرسال</button>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const USERNAME = "{{ username }}";
+    let currentRoom = "عام";
+    const socket = io();
+
+    const roomList = document.getElementById("roomList");
+    const messages = document.getElementById("messages");
+    const msgInput = document.getElementById("msgInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const roomTitle = document.getElementById("roomTitle");
+
+    // دالة إضافة رسالة
+    function addMessage(sender, content, time){
+      const div = document.createElement("div");
+      div.classList.add("msg", sender === USERNAME ? "you" : "other");
+      div.innerHTML = `<div class="bubble"><b>${sender}</b><br>${content}<br><small>${time}</small></div>`;
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    // تحميل رسائل الغرفة
+    function loadMessages(room){
+      fetch(`/api/messages/${room}`)
+        .then(res => res.json())
+        .then(data => {
+          messages.innerHTML = "";
+          data.forEach(m => addMessage(m.sender, m.content, m.created_at));
+        });
+    }
+
+    // الانضمام للغرفة
+    function joinRoom(room){
+      currentRoom = room;
+      roomTitle.textContent = room;
+      messages.innerHTML = "";
+      socket.emit("join_room", {room: room, username: USERNAME});
+      loadMessages(room);
+    }
+
+    // إرسال رسالة
+    sendBtn.onclick = () => {
+      const text = msgInput.value.trim();
+      if(!text) return;
+      socket.emit("send_message", {room: currentRoom, username: USERNAME, content: text});
+      msgInput.value = "";
+    };
+
+    // استقبال رسالة جديدة
+    socket.on("new_message", data => {
+      if(data.room === currentRoom){
+        addMessage(data.sender, data.content, data.created_at);
+      }
+    });
+
+    socket.on("system", data => {
+      addMessage("SYSTEM", data.msg, "");
+    });
+
+    // اختيار غرفة
+    roomList.addEventListener("click", e=>{
+      if(e.target.tagName === "LI"){
+        document.querySelectorAll(".room-list li").forEach(li=>li.classList.remove("active"));
+        e.target.classList.add("active");
+        joinRoom(e.target.dataset.room);
+      }
+    });
+
+    // انضمام أولي
+    joinRoom(currentRoom);
+  </script>
+</body>
+</html>
