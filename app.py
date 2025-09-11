@@ -1,4 +1,3 @@
-# app.py
 import os
 import socket
 from flask import Flask, render_template, request, redirect, session, url_for, jsonify
@@ -9,8 +8,13 @@ from datetime import datetime
 app = Flask(__name__, static_folder='static', template_folder='templates')
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev_secret_123')
 
-# ✅ استخدم PostgreSQL من Environment Variables
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+# 🔥 ضبط قاعدة البيانات
+db_url = os.environ.get("DATABASE_URL")
+
+if db_url and db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql+psycopg2://", 1)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -24,7 +28,7 @@ class Message(db.Model):
     content = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-# إنشاء قاعدة البيانات
+# إنشاء قاعدة البيانات (أول مرة فقط)
 with app.app_context():
     db.create_all()
 
