@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>ChatWave Pro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>ChatWave Pro</h1>
+
+    <form action="/login" method="post">
+        <input type="text" name="username" placeholder="اسم المستخدم" required>
+        <input type="password" name="password" placeholder="كلمة المرور" required>
+        <button type="submit">دخول</button>
+    </form>
+
+    <form action="/register" method="post">
+        <input type="text" name="username" placeholder="اسم المستخدم" required>
+        <input type="password" name="password" placeholder="كلمة المرور" required>
+        <input type="email" name="email" placeholder="البريد الإلكتروني" required>
+        <button type="submit">تسجيل</button>
+    </form>
+
+    <form action="/forgot" method="post">
+        <input type="email" name="email" placeholder="أدخل بريدك لإعادة التعيين" required>
+        <button type="submit">نسيت كلمة المرور؟</button>
+    </form>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+          {% for msg in messages %}
+            <li>{{ msg }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+</body>
+</html>
