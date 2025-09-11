@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>تسجيل دخول — ChatApp</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <main class="center">
+    <section class="card">
+      <div class="brand">
+        <div class="logo">💬</div>
+        <h1>ChatApp</h1>
+        <p class="subtitle">تطبيق دردشة عصري وسريع</p>
+      </div>
+
+      <form action="/login" method="post" class="form">
+        <label for="username">اسم المستخدم</label>
+        <input id="username" name="username" type="text" placeholder="مثال: محمد" required autofocus />
+        <button class="btn" type="submit">دخول</button>
+      </form>
+
+      <div class="download">
+        <!-- لاحقًا نضع هنا رابط APK أو متجر -->
+        <a class="download-btn" href="#" onclick="alert('سيضاف رابط التحميل لاحقاً')">تحميل التطبيق (APK)</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
