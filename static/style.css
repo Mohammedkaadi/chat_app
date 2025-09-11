@@ -1,28 +1,72 @@
 body {
     font-family: Tahoma, Arial, sans-serif;
-    background: #f0f4f8;
-    text-align: center;
+    background: linear-gradient(135deg, #4a90e2, #50c9c3);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 400px;
+    width: 100%;
     padding: 20px;
 }
+
+h1 {
+    text-align: center;
+    color: #fff;
+    margin-bottom: 25px;
+    font-size: 28px;
+}
+
+.card {
+    background: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+h2 {
+    margin-bottom: 15px;
+    font-size: 20px;
+    color: #333;
+    text-align: center;
+}
+
 form {
-    margin: 10px auto;
-    padding: 10px;
-    background: #fff;
-    width: 300px;
-    border-radius: 8px;
-    box-shadow: 0 0 5px #ccc;
+    display: flex;
+    flex-direction: column;
 }
+
 input, button {
-    margin: 5px;
-    padding: 8px;
-    width: 90%;
-}
-#chat-box {
+    margin: 8px 0;
+    padding: 10px;
+    border-radius: 8px;
     border: 1px solid #ccc;
-    height: 200px;
-    width: 90%;
-    margin: 10px auto;
-    padding: 5px;
-    overflow-y: scroll;
-    background: #fff;
+    font-size: 14px;
+}
+
+button {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+button:hover {
+    background-color: #357abd;
+}
+
+.flash {
+    list-style: none;
+    padding: 0;
+    margin-top: 15px;
+    color: red;
+    font-size: 14px;
+    text-align: center;
 }
