@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"/><title>الدفع</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head>
+<body>
+  <header class="top"><a href="{{ url_for('cart') }}">العودة للسلة</a></header>
+  <main class="checkout">
+    <h2>معلومات التوصيل</h2>
+    <form method="post">
+      <textarea name="address" placeholder="العنوان ورقم الهاتف" required></textarea>
+      <button type="submit">تأكيد الطلب — دفع تجريبي</button>
+    </form>
+  </main>
+</body>
+</html>

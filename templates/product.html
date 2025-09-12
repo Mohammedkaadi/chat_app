@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8"/>
+  <title>{{ p[1] }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="top"><a href="{{ url_for('index') }}">العودة</a></header>
+  <main class="product">
+    {% if p[5] %}
+      <img src="{{ url_for('uploads', filename=p[5]) }}" alt="{{ p[1] }}">
+    {% endif %}
+    <h2>{{ p[1] }}</h2>
+    <p class="price">{{ "%.2f"|format(p[3]) }} SAR</p>
+    <p>{{ p[2] }}</p>
+    {% if p[4] > 0 %}
+      <form method="post" action="{{ url_for('add_cart', pid=p[0]) }}">
+        <input type="number" name="qty" value="1" min="1" max="{{ p[4] }}">
+        <button type="submit">أضف إلى السلة</button>
+      </form>
+    {% else %}
+      <p>غير متوفر حالياً</p>
+    {% endif %}
+  </main>
+</body>
+</html>

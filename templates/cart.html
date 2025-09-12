@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8"/>
+  <title>السلة</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="top"><a href="{{ url_for('index') }}">العودة</a></header>
+  <main class="cart">
+    {% if items %}
+      <ul>
+      {% for it in items %}
+        <li>
+          {% if it.image %}<img src="{{ url_for('uploads', filename=it.image) }}" width="80">{% endif %}
+          <strong>{{ it.title }}</strong>
+          <p>{{ it.qty }} × {{ "%.2f"|format(it.price) }} = {{ "%.2f"|format(it.subtotal) }} SAR</p>
+          <form method="post" action="{{ url_for('remove_cart', pid=it.id) }}">
+            <button type="submit">إزالة</button>
+          </form>
+        </li>
+      {% endfor %}
+      </ul>
+      <p>المجموع: {{ "%.2f"|format(total) }} SAR</p>
+      <a class="btn" href="{{ url_for('checkout') }}">الدفع</a>
+    {% else %}
+      <p>السلة فارغة</p>
+    {% endif %}
+  </main>
+</body>
+</html>
