@@ -1,0 +1,39 @@
+body {
+    font-family: "Cairo", sans-serif;
+    background: #f4f6f9;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+h2, h3 {
+    color: #333;
+}
+
+form {
+    margin: 20px auto;
+    padding: 15px;
+    width: 300px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+input, button {
+    width: 90%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+button {
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+    border: none;
+}
+
+button:hover {
+    background: #0056b3;
+}
