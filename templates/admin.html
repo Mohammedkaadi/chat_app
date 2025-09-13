@@ -3,7 +3,7 @@
 <h3>لوحة الإدارة</h3>
 <form method="post" class="row g-2 mb-3">
   <div class="col-md-4"><input name="room" class="form-control" placeholder="اسم الغرفة"></div>
-  <div class="col-md-4"><input name="desc" class="form-control" placeholder="وصف"></div>
+  <div class="col-md-6"><input name="desc" class="form-control" placeholder="وصف"></div>
   <div class="col-md-2"><button class="btn btn-primary w-100">إضافة</button></div>
 </form>
 <div class="row">
@@ -17,6 +17,8 @@
       <a class="btn btn-sm btn-outline-primary" href="{{ url_for('chat', room=r[1]) }}">فتح</a>
     </div>
   </div>
+  {% else %}
+  <div class="col-12"><div class="alert alert-info">لا توجد غرف بعد</div></div>
   {% endfor %}
 </div>
 {% endblock %}
