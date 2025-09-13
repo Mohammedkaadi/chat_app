@@ -2,12 +2,13 @@
 {% block content %}
 <div class="card p-3">
   <h4>مرحباً في Star2Chat</h4>
-  <p class="text-muted">افتح برنامجك كزائر أو سجل المدير مرة واحدة فقط لتشغيل لوحة الإدارة.</p>
+  <p class="text-muted">ادخل كزائر بالاسم أو تسجيل/دخول المدير (مرة واحدة).</p>
+
   <div class="row">
-    <div class="col-12 mb-3">
+    <div class="col-12 mb-2">
       <form method="post" class="d-flex gap-2">
-        <input name="name" class="form-control" placeholder="ادخل اسمك كزائر">
-        <button name="login_user" class="btn btn-success">دخول كزائر</button>
+        <input name="name" class="form-control" placeholder="اسمك (زائر)">
+        <button name="login_user" class="btn btn-success">دخول</button>
       </form>
     </div>
 
@@ -16,12 +17,12 @@
       <form method="post" class="d-flex gap-2">
         <input name="email" class="form-control" placeholder="ايميل المدير">
         <input name="password" type="password" class="form-control" placeholder="كلمة المرور">
-        <button name="login_admin" class="btn btn-warning">دخول</button>
+        <button name="login_admin" class="btn btn-warning">دخول المدير</button>
       </form>
     </div>
 
+    {% if not admin_exists %}
     <div class="col-12 mt-2">
-      {% if not admin_exists %}
       <hr>
       <h6>تسجيل المدير (مرة واحدة)</h6>
       <form method="post" class="row g-2">
@@ -30,8 +31,8 @@
         <div class="col-4"><input name="password" type="password" class="form-control" placeholder="كلمة المرور"></div>
         <div class="col-12"><button name="register_admin" class="btn btn-primary mt-2 w-100">تسجيل المدير</button></div>
       </form>
-      {% endif %}
     </div>
+    {% endif %}
   </div>
 </div>
 {% endblock %}
