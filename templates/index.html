@@ -1,31 +1,31 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8">
-  <title>تسجيل الدخول - Star2Chat</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-  <div class="container">
-    <h1 class="logo">🌟 Star2Chat</h1>
-    <p class="subtitle">أدخل للدردشة مع الآخرين</p>
-
-    <form action="{{ url_for('login') }}" method="POST" class="login-form">
-      <label for="username">الاسم:</label>
-      <input type="text" id="username" name="username" placeholder="اكتب اسمك..." required>
-
-      {% if not session.get("role") == "admin" %}
-      <!-- كلمة المرور للمدير فقط -->
-      <label for="password">كلمة المرور (للإدارة فقط):</label>
-      <input type="password" id="password" name="password" placeholder="********">
-      {% endif %}
-
-      <button type="submit">دخول</button>
-    </form>
-
-    <footer>
-      <p>🚀 أهلاً بك في غرفة الدردشة الخاصة بنا</p>
-    </footer>
+{% extends 'base.html' %}
+{% block content %}
+<div class="card p-3">
+  <h4>مرحباً في Star2Chat</h4>
+  <div class="row">
+    <div class="col-md-6">
+      <h5>دخول الزوار</h5>
+      <form method="post">
+        <input name="name" class="form-control my-2" placeholder="اكتب اسمك">
+        <button name="login_user" class="btn btn-success w-100">دخول كزائر</button>
+      </form>
+    </div>
+    <div class="col-md-6">
+      <h5>دخول المدير</h5>
+      <form method="post">
+        <input name="email" class="form-control my-2" placeholder="الايميل">
+        <input name="password" type="password" class="form-control my-2" placeholder="كلمة المرور">
+        <button name="login_admin" class="btn btn-warning w-100">دخول المدير</button>
+      </form>
+      <hr>
+      <h6>تسجيل مدير جديد</h6>
+      <form method="post">
+        <input name="name" class="form-control my-2" placeholder="الاسم">
+        <input name="email" class="form-control my-2" placeholder="الايميل">
+        <input name="password" type="password" class="form-control my-2" placeholder="كلمة المرور">
+        <button name="register_admin" class="btn btn-primary w-100">تسجيل</button>
+      </form>
+    </div>
   </div>
-</body>
-</html>
+</div>
+{% endblock %}
