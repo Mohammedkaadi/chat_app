@@ -1,52 +1,23 @@
-const CACHE_NAME = "star2chat-v2";
-const urlsToCache = [
-  "/",
-  "/static/style-app.css",
-  "/static/icons/icon-192.png",
-  "/static/icons/icon-512.png"
+const CACHE_NAME = 'star2chat-cache-v1';
+const assets = [
+  '/',
+  '/static/style-app.css',
+  '/static/manifest.json',
+  '/static/icons/icon-192.png',
+  '/static/icons/icon-512.png'
 ];
 
-// Install
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(urlsToCache);
-    })
-  );
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(assets)));
+  self.skipWaiting();
 });
 
-// Activate
-self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cache) => {
-          if (cache !== CACHE_NAME) {
-            return caches.delete(cache);
-          }
-        })
-      );
-    })
-  );
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(keys => Promise.all(keys.map(k => { if(k!==CACHE_NAME) return caches.delete(k); }))));
+  self.clients.claim();
 });
 
-// Fetch
-self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
-    })
-  );
-});
-
-// إشعار صوتي عند استقبال رسالة جديدة
-self.addEventListener("push", (event) => {
-  const data = event.data ? event.data.text() : "📩 رسالة جديدة";
-  event.waitUntil(
-    self.registration.showNotification("Star2Chat", {
-      body: data,
-      icon: "/static/icons/icon-192.png",
-      badge: "/static/icons/icon-192.png"
-    })
-  );
+self.addEventListener('fetch', e => {
+  if(e.request.method !== 'GET') return;
+  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
 });
