@@ -1,24 +1,33 @@
 {% extends 'base.html' %}
 {% block content %}
-<h3>لوحة الإدارة</h3>
-<form method="post" class="row g-2 mb-3">
-  <div class="col-md-4"><input name="room" class="form-control" placeholder="اسم الغرفة"></div>
-  <div class="col-md-6"><input name="desc" class="form-control" placeholder="وصف"></div>
-  <div class="col-md-2"><button class="btn btn-primary w-100">إضافة</button></div>
-</form>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3>لوحة الإدارة</h3>
+  <div>مدير: <strong>{{ admin }}</strong></div>
+</div>
+<div class="card p-3 mb-3">
+  <h5>إضافة غرفة جديدة</h5>
+  <form method="post" class="row g-2 align-items-center">
+    <div class="col-5"><input name="room" class="form-control" placeholder="اسم الغرفة"></div>
+    <div class="col-5"><input name="desc" class="form-control" placeholder="وصف قصير"></div>
+    <div class="col-2"><button class="btn btn-primary w-100">إضافة</button></div>
+  </form>
+</div>
+
 <div class="row">
   {% for r in rooms %}
-  <div class="col-md-6 mb-2">
-    <div class="card p-2 d-flex justify-content-between align-items-center">
-      <div>
-        <div class="fw-bold">{{ r[1] }}</div>
-        <div class="text-muted small">{{ r[2] }}</div>
+    <div class="col-12 mb-2">
+      <div class="room-card">
+        <div>
+          <div class="fw-bold">{{ r[1] }}</div>
+          <div class="text-muted small">{{ r[2] }}</div>
+        </div>
+        <div>
+          <a class="btn btn-sm btn-outline-primary" href="{{ url_for('chat', room=r[1]) }}">فتح</a>
+        </div>
       </div>
-      <a class="btn btn-sm btn-outline-primary" href="{{ url_for('chat', room=r[1]) }}">فتح</a>
     </div>
-  </div>
   {% else %}
-  <div class="col-12"><div class="alert alert-info">لا توجد غرف بعد</div></div>
+    <div class="col-12"><div class="alert alert-info">لا توجد غرف بعد</div></div>
   {% endfor %}
 </div>
 {% endblock %}
