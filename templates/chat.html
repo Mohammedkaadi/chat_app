@@ -1,20 +1,34 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="card p-3">
+<div class="card p-2">
   <div class="d-flex justify-content-between align-items-center mb-2">
     <div>
       <h5 class="mb-0">{{ room }}</h5>
       <small class="text-muted">أنت: <strong>{{ user }}</strong></small>
     </div>
-    <div><small id="onlineCount" class="text-muted">...</small></div>
+    <div class="text-end">
+      <div id="presenceCount" class="fw-bold">المتصلون: 0</div>
+      <button id="membersBtn" class="btn btn-sm btn-outline-secondary mt-1">قائمة الأعضاء</button>
+    </div>
   </div>
 
-  <div id="messages" class="messages mb-2"></div>
+  <div class="d-flex gap-2">
+    <div style="flex:1;">
+      <div id="messages" class="messages mb-2"></div>
+      <div class="chat-input">
+        <button id="recordBtn" class="btn-record" title="تسجيل صوتي">🎙</button>
+        <input id="msg" class="form-control" placeholder="اكتب رسالة">
+        <button id="sendBtn" class="btn btn-primary">إرسال</button>
+      </div>
+    </div>
 
-  <div class="chat-input">
-    <button id="recordBtn" class="btn-record" title="تسجيل صوتي">🎙</button>
-    <input id="msg" class="form-control" placeholder="اكتب رسالة">
-    <button id="sendBtn" class="btn btn-primary">إرسال</button>
+    <!-- sidebar members (initially hidden on small screens) -->
+    <aside id="membersPanel" style="width:260px;display:none;">
+      <div class="users-list p-2">
+        <h6>المتصلون</h6>
+        <ul id="onlineUsersList" class="list-unstyled"></ul>
+      </div>
+    </aside>
   </div>
 </div>
 
@@ -27,8 +41,15 @@ const room = "{{ room }}";
 let user = "{{ user }}";
 const role = "{{ role if role else 'user' }}";
 const messagesDiv = document.getElementById('messages');
-const msgInput = document.getElementById('msg');
+const presenceCount = document.getElementById('presenceCount');
+const onlineUsersList = document.getElementById('onlineUsersList');
+const membersPanel = document.getElementById('membersPanel');
+const membersBtn = document.getElementById('membersBtn');
 const notify = document.getElementById('notify');
+
+membersBtn.addEventListener('click', ()=> {
+  membersPanel.style.display = membersPanel.style.display === 'none' ? 'block' : 'none';
+});
 
 socket.emit('join', {room: room, user: user, role: role});
 
@@ -38,51 +59,77 @@ fetch('/api/messages/' + encodeURIComponent(room)).then(r=>r.json()).then(list=>
   list.forEach(it=>{
     if(it.type === 'text'){
       const cls = it.user === user ? 'message you' : 'message other';
-      messagesDiv.innerHTML += `<div class="${cls}"><strong>${it.user}</strong><div>${it.content}</div></div>`;
+      messagesDiv.innerHTML += `<div class="${cls}"><div class="meta"><strong>${it.user}</strong> <small class="text-muted">${it.time}</small></div><div class="text">${it.content}</div></div>`;
     } else if(it.type === 'audio'){
       const cls = it.user === user ? 'message you' : 'message other';
-      messagesDiv.innerHTML += `<div class="${cls}"><strong>${it.user}</strong><div><audio controls src="/uploads/${it.content}"></audio></div></div>`;
+      messagesDiv.innerHTML += `<div class="${cls}"><div class="meta"><strong>${it.user}</strong></div><div class="text"><audio controls src="/uploads/${it.content}"></audio></div></div>`;
     }
   });
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 });
 
-// socket messages
+// handle socket messages
 socket.on('message', function(d){
   if(d.type === 'notice'){
-    messagesDiv.innerHTML += `<div class="text-muted small text-center my-1">${d.msg}</div>`;
+    messagesDiv.innerHTML += `<div class="text-center text-muted small my-1">${d.msg}</div>`;
   } else if(d.type === 'message'){
     const isMe = d.user === user;
     const cls = isMe ? 'message you' : 'message other';
-    messagesDiv.innerHTML += `<div class="${cls}"><strong>${d.user}</strong><div>${d.msg}</div></div>`;
-    if(!isMe && "{{ session.get('sound','on') }}" === "on") notify.play();
+    messagesDiv.innerHTML += `<div class="${cls}"><div class="meta"><strong>${d.user}</strong></div><div class="text">${d.msg}</div></div>`;
+    if(!isMe) notify.play();
   } else if(d.type === 'audio'){
     const isMe = d.user === user;
     const cls = isMe ? 'message you' : 'message other';
-    messagesDiv.innerHTML += `<div class="${cls}"><strong>${d.user}</strong><div><audio controls src="${d.url}"></audio></div></div>`;
-    if(!isMe && "{{ session.get('sound','on') }}" === "on") notify.play();
+    messagesDiv.innerHTML += `<div class="${cls}"><div class="meta"><strong>${d.user}</strong></div><div class="text"><audio controls src="${d.url}"></audio></div></div>`;
+    if(!isMe) notify.play();
   }
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 });
 
-document.getElementById('sendBtn').addEventListener('click', ()=>{
-  const txt = msgInput.value.trim();
-  if(!txt) return;
-  socket.emit('chat', {room: room, user: user, role: role, msg: txt});
-  msgInput.value = '';
+// presence / members updates
+socket.on('members_update', function(d){
+  if(d.room !== room) return;
+  // update count via API for details
+  fetch('/api/members/' + encodeURIComponent(room)).then(r=>r.json()).then(list=>{
+    presenceCount.textContent = "المتصلون: " + list.length;
+    onlineUsersList.innerHTML = '';
+    list.forEach(m => {
+      // badge & status
+      const badge = m.badge || 'member';
+      const status = m.status || 'متاح';
+      const dot = `<span class="status ${status==='متاح'?'online':'offline'}"></span>`;
+      const badgeHtml = `<span class="badge ${badge}">${badge==='owner'?'مدير': badge==='mod'?'مشرف': badge==='vip'?'مميز':'عضو'}</span>`;
+      onlineUsersList.innerHTML += `<li class="p-1 d-flex justify-content-between align-items-center"><div>${dot} <strong>${m.user}</strong> ${badgeHtml}<div class="text-muted small">${status}</div></div></li>`;
+    });
+  });
 });
 
-// recording
+// request members detail (optional)
+function refreshMembers(){ socket.emit('get_members_detail', {room: room}); }
+socket.on('members_detail', function(d){
+  // handled via members_update above; kept for extension
+});
+
+// send text
+document.getElementById('sendBtn').addEventListener('click', function(){
+  const txt = document.getElementById('msg').value.trim();
+  if(!txt) return;
+  socket.emit('chat', {room: room, user: user, role: role, msg: txt});
+  document.getElementById('msg').value = '';
+});
+
+// audio recording
 let mediaRecorder = null, chunks = [];
 const recordBtn = document.getElementById('recordBtn');
-recordBtn.addEventListener('click', async ()=>{
+recordBtn.addEventListener('click', async () => {
   if(!mediaRecorder){
     try{
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorder = new MediaRecorder(stream);
       mediaRecorder.ondataavailable = e => chunks.push(e.data);
       mediaRecorder.onstop = async () => {
-        const blob = new Blob(chunks, { type: 'audio/webm' }); chunks = [];
+        const blob = new Blob(chunks, { type: 'audio/webm' });
+        chunks = [];
         const fd = new FormData();
         fd.append('audio', blob, 'voice.webm');
         fd.append('room', room); fd.append('user', user); fd.append('role', role);
@@ -100,6 +147,8 @@ recordBtn.addEventListener('click', async ()=>{
   }
 });
 
-window.addEventListener('beforeunload', ()=> { try{ socket.emit('leave', {room: room, user: user}); } catch(e){} });
+window.addEventListener('beforeunload', ()=> {
+  try{ socket.emit('leave', {room: room, user: user}); }catch(e){}
+});
 </script>
 {% endblock %}
