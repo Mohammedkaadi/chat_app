@@ -1,113 +1,177 @@
-import os
-from flask import Flask, render_template, request, redirect, session, jsonify
-from flask_bcrypt import Bcrypt
-from flask_socketio import SocketIO, emit
+from flask import Flask, render_template, request, redirect, session, url_for
+from flask_socketio import SocketIO, join_room, leave_room, send
 import sqlite3
-from datetime import datetime
+import os
 
-app = Flask(__name__, static_folder='static', template_folder='templates')
-app.secret_key = os.environ.get('SECRET_KEY', 'change-this-secret')
-bcrypt = Bcrypt(app)
-socketio = SocketIO(app, cors_allowed_origins="*", manage_session=True)
+app = Flask(__name__)
+app.secret_key = "secret123"
+socketio = SocketIO(app)
 
-DB = 'chat.db'
+DB = "chat.db"
 
+# إنشاء قاعدة البيانات والجداول إذا ما كانت موجودة
 def init_db():
-    conn = sqlite3.connect(DB)
-    c = conn.cursor()
-    c.execute("""CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT UNIQUE NOT NULL,
-        email TEXT UNIQUE NOT NULL,
-        password TEXT NOT NULL
-    )""")
-    c.execute("""CREATE TABLE IF NOT EXISTS messages (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER,
-        message TEXT,
-        timestamp TEXT
-    )""")
-    conn.commit()
-    conn.close()
+    with sqlite3.connect(DB) as conn:
+        c = conn.cursor()
+        c.execute("""CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            email TEXT,
+            password TEXT,
+            role TEXT
+        )""")
+        c.execute("""CREATE TABLE IF NOT EXISTS rooms (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            created_by TEXT
+        )""")
+        c.execute("""CREATE TABLE IF NOT EXISTS messages (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            room TEXT,
+            user TEXT,
+            content TEXT,
+            time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )""")
+        conn.commit()
 
 init_db()
 
-def query_db(query, args=(), one=False):
-    conn = sqlite3.connect(DB)
-    cur = conn.cursor()
-    cur.execute(query, args)
-    rv = cur.fetchall()
-    conn.commit()
-    conn.close()
-    return (rv[0] if rv else None) if one else rv
-
-@app.route('/')
+# الصفحة الرئيسية: دخول مدير أو زائر
+@app.route("/", methods=["GET","POST"])
 def index():
-    if 'user_id' in session:
-        return redirect('/chat')
-    return render_template('index.html')
+    if request.method == "POST":
+        if "login_admin" in request.form:
+            email = request.form["email"]
+            password = request.form["password"]
+            with sqlite3.connect(DB) as conn:
+                c = conn.cursor()
+                c.execute("SELECT * FROM users WHERE email=? AND password=? AND role='admin'", (email, password))
+                admin = c.fetchone()
+                if admin:
+                    session["user"] = admin[1]
+                    session["role"] = "admin"
+                    return redirect(url_for("admin"))
+        elif "login_user" in request.form:
+            name = request.form["name"]
+            session["user"] = name
+            session["role"] = "user"
+            return redirect(url_for("rooms"))
+        elif "register_admin" in request.form:
+            name = request.form["name"]
+            email = request.form["email"]
+            password = request.form["password"]
+            with sqlite3.connect(DB) as conn:
+                c = conn.cursor()
+                c.execute("INSERT INTO users (name,email,password,role) VALUES (?,?,?,?)",
+                          (name,email,password,"admin"))
+                conn.commit()
+            return "تم تسجيل المدير، ارجع وسجل دخولك."
+    return """
+    <h2>دخول الزوار</h2>
+    <form method="post">
+      <input name="name" placeholder="اكتب اسمك">
+      <button name="login_user">دخول</button>
+    </form>
+    <h2>دخول المدير</h2>
+    <form method="post">
+      <input name="email" placeholder="الإيميل">
+      <input name="password" type="password" placeholder="كلمة المرور">
+      <button name="login_admin">دخول</button>
+    </form>
+    <h2>تسجيل مدير جديد</h2>
+    <form method="post">
+      <input name="name" placeholder="الاسم">
+      <input name="email" placeholder="الإيميل">
+      <input name="password" placeholder="كلمة المرور">
+      <button name="register_admin">تسجيل</button>
+    </form>
+    """
 
-@app.route('/chat')
-def chat():
-    if 'user_id' not in session:
-        return redirect('/')
-    return render_template('chat.html', username=session.get('username'))
+# لوحة المدير: إنشاء غرف
+@app.route("/admin", methods=["GET","POST"])
+def admin():
+    if "user" not in session or session["role"] != "admin":
+        return redirect("/")
+    if request.method == "POST":
+        room_name = request.form["room"]
+        with sqlite3.connect(DB) as conn:
+            c = conn.cursor()
+            c.execute("INSERT INTO rooms (name,created_by) VALUES (?,?)",
+                      (room_name, session["user"]))
+            conn.commit()
+    with sqlite3.connect(DB) as conn:
+        c = conn.cursor()
+        c.execute("SELECT * FROM rooms")
+        rooms = c.fetchall()
+    html = "<h2>لوحة المدير</h2><ul>"
+    for r in rooms:
+        html += f"<li>{r[1]}</li>"
+    html += "</ul>"
+    html += """
+    <form method="post">
+      <input name="room" placeholder="اسم الغرفة">
+      <button>إضافة غرفة</button>
+    </form>
+    """
+    return html
 
-@app.route('/signup', methods=['POST'])
-def signup():
-    data = request.get_json()
-    username = data.get('username','').strip()
-    email = data.get('email','').strip()
-    password = data.get('password','')
-    if not username or not email or not password:
-        return 'مطلوب تعبئة جميع الحقول', 400
-    pw_hash = bcrypt.generate_password_hash(password).decode('utf-8')
-    try:
-        query_db('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', (username, email, pw_hash))
-        return 'تم إنشاء الحساب', 200
-    except Exception as e:
-        return 'اسم المستخدم أو الإيميل مستخدم سابقاً', 400
+# قائمة الغرف للزوار
+@app.route("/rooms")
+def rooms():
+    if "user" not in session:
+        return redirect("/")
+    with sqlite3.connect(DB) as conn:
+        c = conn.cursor()
+        c.execute("SELECT * FROM rooms")
+        rooms = c.fetchall()
+    html = "<h2>اختر غرفة</h2><ul>"
+    for r in rooms:
+        html += f"<li><a href='/chat/{r[1]}'>{r[1]}</a></li>"
+    html += "</ul>"
+    return html
 
-@app.route('/login', methods=['POST'])
-def login():
-    data = request.get_json()
-    username = data.get('username','').strip()
-    password = data.get('password','')
-    if not username or not password:
-        return 'مطلوب اسم المستخدم وكلمة المرور', 400
-    row = query_db('SELECT id, password FROM users WHERE username=?', (username,), one=True)
-    if row and bcrypt.check_password_hash(row[1], password):
-        session['user_id'] = row[0]
-        session['username'] = username
-        return 'تم تسجيل الدخول', 200
-    return 'خطأ في بيانات الدخول', 401
+# صفحة الدردشة
+@app.route("/chat/<room>")
+def chat(room):
+    if "user" not in session:
+        return redirect("/")
+    return f"""
+    <h2>الغرفة: {room}</h2>
+    <div id='messages'></div>
+    <input id='msg' placeholder='اكتب رسالتك'>
+    <button onclick='sendMsg()'>إرسال</button>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script>
+      var socket = io();
+      var room = "{room}";
+      var user = "{session['user']}";
+      socket.emit("join", {{room:room, user:user}});
+      socket.on("message", function(data){{
+        var div = document.getElementById("messages");
+        div.innerHTML += "<p>"+data+"</p>";
+      }});
+      function sendMsg(){{
+        var msg = document.getElementById("msg").value;
+        socket.emit("chat", {{room:room, user:user, msg:msg}});
+        document.getElementById("msg").value="";
+      }}
+    </script>
+    """
 
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect('/')
+# أحداث سوكيت
+@socketio.on("join")
+def on_join(data):
+    room = data["room"]
+    user = data["user"]
+    join_room(room)
+    send(f"{user} دخل الغرفة", to=room)
 
-@app.route('/recent_messages')
-def recent_messages():
-    rows = query_db('SELECT messages.message, messages.timestamp, users.username FROM messages JOIN users ON messages.user_id = users.id ORDER BY messages.id DESC LIMIT 50')
-    msgs = [{'user': r[2], 'msg': r[0], 'time': r[1]} for r in rows]
-    msgs.reverse()
-    return jsonify(msgs)
+@socketio.on("chat")
+def on_chat(data):
+    room = data["room"]
+    user = data["user"]
+    msg = data["msg"]
+    send(f"{user}: {msg}", to=room)
 
-@socketio.on('send_message')
-def handle_send_message(data):
-    if 'user_id' not in session:
-        emit('error', {'msg': 'unauthorized'})
-        return
-    msg = data.get('msg','').strip()
-    if not msg:
-        return
-    timestamp = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
-    query_db('INSERT INTO messages (user_id, message, timestamp) VALUES (?, ?, ?)', (session['user_id'], msg, timestamp))
-    payload = {'user': session.get('username'), 'msg': msg, 'time': timestamp}
-    emit('receive_message', payload, broadcast=True)
-
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    # Use eventlet/gevent in production. socketio.run will pick eventlet if installed.
-    socketio.run(app, host='0.0.0.0', port=port)
+if __name__ == "__main__":
+    socketio.run(app, host="0.0.0.0", port=5000, debug=True)
