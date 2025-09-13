@@ -4,12 +4,14 @@
 <div class="row">
   {% for r in rooms %}
   <div class="col-md-6 mb-3">
-    <div class="card p-2">
+    <div class="card p-3">
       <div class="fw-bold">{{ r[1] }}</div>
       <div class="text-muted small">{{ r[2] }}</div>
-      <a class="btn btn-sm btn-primary mt-1" href="{{ url_for('chat', room=r[1]) }}">انضمام</a>
+      <a class="btn btn-sm btn-primary mt-2" href="{{ url_for('chat', room=r[1]) }}">انضمام</a>
     </div>
   </div>
+  {% else %}
+  <div class="col-12"><div class="alert alert-info">لا توجد غرف حتى الآن</div></div>
   {% endfor %}
 </div>
 {% endblock %}
