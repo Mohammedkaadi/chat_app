@@ -1,44 +1,29 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>غرفة الشات — ChatWave</title>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
+<head><meta charset="UTF-8"><title>دردشة</title></head>
 <body>
-  <div class="topbar">
-    <div class="left"><a class="logout" href="/logout">تسجيل خروج</a></div>
-    <div class="center"><h2>ChatWave</h2></div>
-    <div class="right"><span class="username">{{ username }}</span></div>
-  </div>
+<h2>الغرفة: {{ room }}</h2>
+<div id="messages"></div>
+<input id="msg" placeholder="اكتب رسالتك">
+<button onclick="sendMsg()">إرسال</button>
 
-  <main class="chat-page">
-    <aside class="sidebar">
-      <div class="profile">
-        <div class="avatar"></div>
-        <div class="meta">
-          <strong>{{ username }}</strong>
-          <small>غرفة عامة</small>
-        </div>
-      </div>
-      <div class="info">
-        <p>رسائل فورية، تجربة سلسة وسريعة.</p>
-      </div>
-    </aside>
+<script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+<script>
+  var socket = io();
+  var room = "{{ room }}";
+  var user = "{{ user }}";
 
-    <section class="chat-area">
-      <div id="messages" class="messages" aria-live="polite"></div>
+  socket.emit("join", {room:room, user:user});
+  socket.on("message", function(data){
+    var div = document.getElementById("messages");
+    div.innerHTML += "<p>"+data+"</p>";
+  });
 
-      <form id="chatForm" class="composer" autocomplete="off">
-        <input id="msgInput" placeholder="اكتب رسالة..." required />
-        <button type="submit" class="send">إرسال</button>
-      </form>
-    </section>
-  </main>
-
-  <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
-  <script src="{{ url_for('static', filename='app.js') }}"></script>
+  function sendMsg(){
+    var msg = document.getElementById("msg").value;
+    socket.emit("chat", {room:room, user:user, msg:msg});
+    document.getElementById("msg").value="";
+  }
+</script>
 </body>
 </html>
