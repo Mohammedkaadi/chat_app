@@ -6,24 +6,28 @@
 </div>
 <div class="card p-3 mb-3">
   <h5>إضافة غرفة جديدة</h5>
-  <form method="post" class="d-flex gap-2">
-    <input name="room" class="form-control" placeholder="اسم الغرفة">
-    <button class="btn btn-primary">إضافة</button>
+  <form method="post" class="row g-2 align-items-center">
+    <div class="col-md-4"><input name="room" class="form-control" placeholder="اسم الغرفة"></div>
+    <div class="col-md-4"><input name="desc" class="form-control" placeholder="وصف قصير"></div>
+    <div class="col-md-2"><input name="flag" class="form-control" placeholder="رمز العلم أو صورة"></div>
+    <div class="col-md-2"><button class="btn btn-primary w-100">إضافة</button></div>
   </form>
 </div>
-<div class="card p-3">
-  <h5>الغرف الحالية</h5>
-  <ul class="list-group">
-    {% for r in rooms %}
-      <li class="list-group-item d-flex justify-content-between align-items-center">
-        <span>{{ r[1] }}</span>
+<div class="row">
+  {% for r in rooms %}
+    <div class="col-md-6 mb-2">
+      <div class="card p-2 d-flex justify-content-between align-items-center">
         <div>
-          <a href="{{ url_for('chat', room=r[1]) }}" class="btn btn-sm btn-outline-primary">فتح</a>
+          <div class="fw-bold">{{ r[1] }}</div>
+          <div class="text-muted small">{{ r[2] }}</div>
         </div>
-      </li>
-    {% else %}
-      <li class="list-group-item">لا توجد غرف بعد</li>
-    {% endfor %}
-  </ul>
+        <div>
+          <a class="btn btn-sm btn-outline-primary" href="{{ url_for('chat', room=r[1]) }}">فتح</a>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <div class="col-12"><div class="alert alert-info">لا توجد غرف بعد</div></div>
+  {% endfor %}
 </div>
 {% endblock %}
