@@ -9,13 +9,13 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-<nav class="navbar navbar-light bg-info">
+<nav class="navbar navbar-light" style="background:linear-gradient(90deg,#5eead4,#60a5fa);">
   <div class="container-fluid">
     <a class="navbar-brand fw-bold" href="{{ url_for('rooms') }}">Star2Chat</a>
     {% if session.get('user') %}
     <div>
       <span class="me-3">مرحباً، <strong>{{ session.get('user') }}</strong></span>
-      <a href="{{ url_for('settings') }}" class="btn btn-sm btn-outline-dark">⚙️</a>
+      <a href="{{ url_for('settings') }}" class="btn btn-sm btn-outline-dark">⚙</a>
       <a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline-dark">خروج</a>
     </div>
     {% endif %}
