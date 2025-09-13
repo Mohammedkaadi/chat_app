@@ -1,32 +1,30 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="row">
-  <div class="col-md-6">
-    <div class="card p-3">
-      <h4>دخول الزوار</h4>
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card p-3 mb-3">
+      <h4>اهلاً بك في Star2Chat</h4>
       {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
       {% if message %}<div class="alert alert-success">{{ message }}</div>{% endif %}
-      <form method="post">
-        <input name="name" class="form-control my-2" placeholder="اكتب اسمك">
-        <button name="login_user" class="btn btn-primary w-100">دخول كزائر</button>
-      </form>
-    </div>
-  </div>
-  <div class="col-md-6">
-    <div class="card p-3">
-      <h4>دخول المدير</h4>
-      <form method="post">
-        <input name="email" class="form-control my-2" placeholder="الإيميل">
-        <input name="password" type="password" class="form-control my-2" placeholder="كلمة المرور">
-        <button name="login_admin" class="btn btn-warning w-100">دخول المدير</button>
-      </form>
+      <p>ادخل كزائر أو سجل كمدير لإدارة الغرف.</p>
+      <div class="d-flex gap-2">
+        <form method="post" class="w-50">
+          <input name="name" class="form-control my-2" placeholder="اكتب اسمك">
+          <button name="login_user" class="btn btn-success w-100">دخول كزائر</button>
+        </form>
+        <form method="post" class="w-50">
+          <input name="email" class="form-control my-2" placeholder="ايميل المدير">
+          <input name="password" type="password" class="form-control my-2" placeholder="كلمة المرور">
+          <button name="login_admin" class="btn btn-warning w-100">دخول المدير</button>
+        </form>
+      </div>
       <hr>
-      <h5>تسجيل مدير جديد (مرة واحدة)</h5>
-      <form method="post">
-        <input name="name" class="form-control my-2" placeholder="الاسم">
-        <input name="email" class="form-control my-2" placeholder="الايميل">
-        <input name="password" class="form-control my-2" placeholder="كلمة المرور">
-        <button name="register_admin" class="btn btn-success w-100">تسجيل مدير</button>
+      <h6>تسجيل مدير جديد (مرة واحدة)</h6>
+      <form method="post" class="d-flex gap-2">
+        <input name="name" class="form-control" placeholder="الاسم">
+        <input name="email" class="form-control" placeholder="الايميل">
+        <input name="password" class="form-control" placeholder="كلمة المرور">
+        <button name="register_admin" class="btn btn-primary">تسجيل مدير</button>
       </form>
     </div>
   </div>
