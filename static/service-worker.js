@@ -1,4 +1,4 @@
-const CACHE_NAME = 'star2chat-cache-v1';
+const CACHE_NAME = 'star2chat-v1';
 const assets = [
   '/',
   '/static/style-app.css',
