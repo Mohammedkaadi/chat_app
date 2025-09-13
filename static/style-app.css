@@ -1,0 +1,24 @@
+:root{
+  --primary:#0ea5a4;
+  --accent:#60a5fa;
+  --bg:#f5fbff;
+  --card:#ffffff;
+  --text:#0f172a;
+}
+*{box-sizing:border-box}
+body.app-body{font-family:"Cairo",sans-serif;background:var(--bg);color:var(--text);margin:0;padding-bottom:80px;}
+.app-navbar{background:linear-gradient(90deg,var(--primary),var(--accent));color:#fff;padding:10px 0}
+.app-title{color:#fff;font-weight:700}
+.app-shell{padding:12px 12px 100px;}
+.room-card{background:var(--card);border-radius:12px;padding:12px;margin-bottom:10px;box-shadow:0 6px 16px rgba(12,35,64,0.06);display:flex;align-items:center;justify-content:space-between}
+.app-footer{position:fixed;left:0;right:0;bottom:0;height:68px;background:#fff;border-top:1px solid #eee;display:flex;align-items:center;justify-content:center}
+.app-tab{color:#475569;text-decoration:none;font-size:12px;text-align:center}
+.app-tab i{font-size:18px;display:block}
+.chat-shell{display:block}
+.messages{background:linear-gradient(180deg,#fff,#f7fbff);padding:12px;border-radius:12px;height:50vh;overflow:auto}
+.bubble{max-width:78%;padding:10px 12px;border-radius:14px;margin:8px 0;box-shadow:0 2px 6px rgba(2,6,23,0.06)}
+.bubble.me{margin-left:auto;background:linear-gradient(90deg,var(--accent),var(--primary));color:#fff;text-align:right}
+.bubble.other{margin-right:auto;background:var(--card);border:1px solid #eef2f8}
+.bubble .meta{font-size:12px;color:#334155;margin-bottom:6px}
+.bubble .text{font-size:15px;word-wrap:break-word}
+.card{border-radius:12px}
