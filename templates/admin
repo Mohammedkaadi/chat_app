@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head><meta charset="UTF-8"><title>لوحة الإدارة</title></head>
+<body>
+<h2>الغرف الحالية</h2>
+<ul>
+  {% for r in rooms %}
+    <li>{{ r[1] }}</li>
+  {% endfor %}
+</ul>
+
+<h3>إضافة غرفة جديدة</h3>
+<form method="post">
+  <input name="room" placeholder="اسم الغرفة">
+  <button>إضافة</button>
+</form>
+</body>
+</html>
