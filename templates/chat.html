@@ -1,22 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="row">
-  <div class="col-md-4">
+<div class="chat-shell">
+  <div class="col-12">
     <div class="card p-3">
-      <h5>{{ room }}</h5>
-      <div class="text-muted">أنت: <strong>{{ user }}</strong></div>
-      <hr>
-      <h6>المتصلون</h6>
-      <ul id="membersList" class="list-unstyled small text-muted">
-        <li>جاري التحميل...</li>
-      </ul>
-    </div>
-  </div>
-  <div class="col-md-8">
-    <div class="card p-3">
-      <div id="messages" class="messages" style="height:420px;overflow:auto;"></div>
-      <div class="d-flex gap-2 mt-2 align-items-center">
-        <button id="recordBtn" class="btn btn-light">🎙 تسجيل</button>
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <div><h5>{{ room }}</h5><small class="text-muted">أنت: <strong>{{ user }}</strong></small></div>
+        <div><small id="onlineCount" class="text-muted">...</small></div>
+      </div>
+
+      <div id="messages" class="messages mb-2"></div>
+
+      <div class="d-flex gap-2 align-items-center">
+        <button id="recordBtn" class="btn btn-outline-secondary">🎙</button>
         <input id="msg" class="form-control" placeholder="اكتب رسالة">
         <button id="sendBtn" class="btn btn-primary">إرسال</button>
       </div>
@@ -28,34 +23,35 @@
 <script>
 const socket = io();
 const room = "{{ room }}";
-const user = "{{ user }}";
+let user = "{{ user }}";
 const role = "{{ role if role else 'user' }}";
 const messagesDiv = document.getElementById('messages');
-const membersList = document.getElementById('membersList');
+const onlineCount = document.getElementById('onlineCount');
 
 socket.emit('join', {room: room, user: user, role: role});
 
-socket.on('message', function(data){
-  if(data.type === 'notice'){
-    messagesDiv.innerHTML += `<div class="text-center text-muted small my-1">${data.msg}</div>`;
-  } else if(data.type === 'message'){
-    const isMe = data.user === user;
-    const cls = isMe ? 'text-end text-primary' : 'text-start';
-    messagesDiv.innerHTML += `<div class="${cls}"><strong>${data.user}</strong>: ${data.msg}</div>`;
-  } else if(data.type === 'audio'){
-    const isMe = data.user === user;
-    const cls = isMe ? 'text-end' : 'text-start';
-    messagesDiv.innerHTML += `<div class="${cls}"><strong>${data.user}</strong>: <audio controls src="${data.url}"></audio></div>`;
+// handle incoming messages
+socket.on('message', function(d){
+  if(d.type === 'notice'){
+    messagesDiv.innerHTML += `<div class="text-center text-muted small my-1">${d.msg}</div>`;
+  } else if(d.type === 'message'){
+    const isMe = d.user === user;
+    const cls = isMe ? 'bubble me' : 'bubble other';
+    messagesDiv.innerHTML += `<div class="${cls}"><div class="meta"><strong>${d.user}</strong></div><div class="text">${d.msg}</div></div>`;
+  } else if(d.type === 'audio'){
+    const isMe = d.user === user;
+    const cls = isMe ? 'bubble me' : 'bubble other';
+    messagesDiv.innerHTML += `<div class="${cls}"><div class="meta"><strong>${d.user}</strong></div><div class="text"><audio controls src="${d.url}"></audio></div></div>`;
   }
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 });
 
-socket.on('members_update', function(d){
-  if(d.room !== room) return;
+// members update
+socket.on('members_update', function(obj){
+  if(obj.room !== room) return;
+  onlineCount.textContent = obj.members.length + " مستخدم متصل";
   fetch('/api/members/' + encodeURIComponent(room)).then(r=>r.json()).then(list=>{
-    membersList.innerHTML = '';
-    if(list.length === 0) membersList.innerHTML = '<li class="text-muted small">لا يوجد أعضاء متصلون</li>';
-    else list.forEach(m => membersList.innerHTML += `<li>🟢 ${m.user} ${m.role==='admin'?'(مدير)':''}</li>`);
+    // optionally show members side list
   });
 });
 
@@ -64,16 +60,17 @@ fetch('/api/messages/' + encodeURIComponent(room)).then(r=>r.json()).then(list=>
   messagesDiv.innerHTML = '';
   list.forEach(it=>{
     if(it.type === 'text'){
-      const cls = it.user === user ? 'text-end text-primary' : 'text-start';
-      messagesDiv.innerHTML += `<div class="${cls}"><strong>${it.user}</strong>: ${it.content}</div>`;
+      const cls = it.user === user ? 'bubble me' : 'bubble other';
+      messagesDiv.innerHTML += `<div class="${cls}"><div class="meta"><strong>${it.user}</strong></div><div class="text">${it.content}</div></div>`;
     } else if(it.type === 'audio'){
-      const cls = it.user === user ? 'text-end' : 'text-start';
-      messagesDiv.innerHTML += `<div class="${cls}"><strong>${it.user}</strong>: <audio controls src="/uploads/${it.content}"></audio></div>`;
+      const cls = it.user === user ? 'bubble me' : 'bubble other';
+      messagesDiv.innerHTML += `<div class="${cls}"><div class="meta"><strong>${it.user}</strong></div><div class="text"><audio controls src="/uploads/${it.content}"></audio></div></div>`;
     }
   });
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 });
 
+// send text
 document.getElementById('sendBtn').addEventListener('click', function(){
   const msg = document.getElementById('msg').value.trim();
   if(!msg) return;
@@ -81,14 +78,11 @@ document.getElementById('sendBtn').addEventListener('click', function(){
   document.getElementById('msg').value = '';
 });
 
-///// Audio recording /////
-let mediaRecorder = null;
-let chunks = [];
+// audio recording + upload
+let mediaRecorder = null, chunks = [];
 const recordBtn = document.getElementById('recordBtn');
-
 recordBtn.addEventListener('click', async () => {
   if(!mediaRecorder){
-    // start recording
     try{
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorder = new MediaRecorder(stream);
@@ -96,27 +90,29 @@ recordBtn.addEventListener('click', async () => {
       mediaRecorder.onstop = async () => {
         const blob = new Blob(chunks, { type: 'audio/webm' });
         chunks = [];
-        // upload via fetch
         const fd = new FormData();
         fd.append('audio', blob, 'voice.webm');
         fd.append('room', room);
         fd.append('user', user);
         fd.append('role', role);
         const res = await fetch('/upload_audio', { method: 'POST', body: fd });
-        const j = await res.json();
-        // server will emit socket message to room with type 'audio'
+        // server emits audio message to room
       };
       mediaRecorder.start();
-      recordBtn.textContent = '⏸ إيقاف التسجيل';
+      recordBtn.textContent = '⏸ إيقاف';
     } catch(e){
       alert('لا يمكن الوصول للميكروفون');
     }
   } else {
-    // stop
     mediaRecorder.stop();
     mediaRecorder = null;
-    recordBtn.textContent = '🎙 تسجيل';
+    recordBtn.textContent = '🎙';
   }
+});
+
+// leave room on unload
+window.addEventListener('beforeunload', ()=> {
+  try{ socket.emit('leave', {room: room, user: user}); }catch(e){}
 });
 </script>
 {% endblock %}
