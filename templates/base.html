@@ -5,16 +5,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#0ea5a4">
   <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
-  <title>{{ title if title else 'Star2Chat App' }}</title>
-
+  <title>{{ title if title else 'Star2Chat' }}</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='style-app.css') }}">
-
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.png') }}">
-
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
@@ -29,15 +24,14 @@
     <a class="navbar-brand app-title" href="{{ url_for('rooms') }}">Star2Chat</a>
     <div>
       {% if session.get('user') %}
-        <button id="themeBtn" class="btn btn-sm btn-outline-light me-2" title="تبديل الوضع"><i class="fa-solid fa-moon"></i></button>
-        <a href="{{ url_for('settings') }}" class="btn btn-sm btn-outline-light me-2"><i class="fa-solid fa-gear"></i></a>
-        <a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline-light">خروج</a>
+      <span class="me-2 text-white">مرحباً، <strong>{{ session.get('user') }}</strong></span>
+      <a href="{{ url_for('settings') }}" class="btn btn-sm btn-outline-light me-1">⚙</a>
+      <a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline-light">خروج</a>
       {% endif %}
     </div>
   </div>
 </nav>
-
-<div id="app" class="app-shell container-fluid">
+<div class="app-shell container-fluid">
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
       {% for cat,msg in messages %}
@@ -56,15 +50,6 @@
     <a href="{{ url_for('settings') }}" class="app-tab"><i class="fa-solid fa-gear"></i><div>إعدادات</div></a>
   </div>
 </footer>
-
-<script>
-  const themeBtn = document.getElementById('themeBtn');
-  themeBtn?.addEventListener('click', () => {
-    document.body.classList.toggle('dark');
-    localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
-  });
-  if (localStorage.getItem('theme')==='dark') document.body.classList.add('dark');
-</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
