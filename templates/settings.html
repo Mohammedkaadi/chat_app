@@ -1,10 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
-<h3>الإعدادات</h3>
-<form method="post">
+<h4>الإعدادات</h4>
+<form method="post" class="card p-3">
   <div class="mb-2">
     <label class="form-label">اسم العرض</label>
     <input name="name" value="{{ user }}" class="form-control">
+  </div>
+  <div class="mb-2">
+    <label class="form-label">تشغيل الصوت (لإشعارات الرسائل)</label>
+    <select name="sound" class="form-select">
+      <option value="on" {% if sound=='on' %}selected{% endif %}>مفعل</option>
+      <option value="off" {% if sound=='off' %}selected{% endif %}>معطل</option>
+    </select>
   </div>
   <button class="btn btn-primary">حفظ</button>
 </form>
