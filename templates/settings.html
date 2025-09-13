@@ -7,11 +7,8 @@
     <input name="name" value="{{ user }}" class="form-control">
   </div>
   <div class="mb-2">
-    <label class="form-label">تشغيل الصوت</label>
-    <select name="sound" class="form-select">
-      <option value="on" {% if sound=='on' %}selected{% endif %}>مفعل</option>
-      <option value="off" {% if sound=='off' %}selected{% endif %}>معطل</option>
-    </select>
+    <label class="form-label">الحالة الشخصية</label>
+    <input name="status" value="{{ info[3] if info }}" class="form-control" placeholder="مثال: مشغول، متاح...">
   </div>
   <button class="btn btn-primary">حفظ</button>
 </form>
