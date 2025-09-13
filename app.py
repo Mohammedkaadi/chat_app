@@ -21,12 +21,15 @@ def init_db():
         c.execute("""CREATE TABLE IF NOT EXISTS rooms (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT,
+            desc TEXT,
+            flag TEXT,
             created_by TEXT
         )""")
         c.execute("""CREATE TABLE IF NOT EXISTS messages (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             room TEXT,
             user TEXT,
+            role TEXT,
             content TEXT,
             time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )""")
@@ -36,7 +39,7 @@ init_db()
 
 @app.route('/', methods=['GET','POST'])
 def index():
-    # simple home: register admin / login admin / guest login
+    # register admin / login admin / guest login
     if request.method == 'POST':
         if 'register_admin' in request.form:
             name = request.form.get('name','').strip()
@@ -47,7 +50,7 @@ def index():
                     c = conn.cursor()
                     c.execute('INSERT INTO users (name,email,password,role) VALUES (?,?,?,?)', (name,email,password,'admin'))
                     conn.commit()
-                return render_template('index.html', message='تم تسجيل المدير. سجل الدخول الآن.')
+                    return render_template('index.html', message='تم تسجيل المدير. سجل الدخول الآن.')
         if 'login_admin' in request.form:
             email = request.form.get('email','').strip()
             password = request.form.get('password','').strip()
@@ -76,10 +79,12 @@ def admin():
         return redirect(url_for('index'))
     if request.method == 'POST':
         room = request.form.get('room','').strip()
+        desc = request.form.get('desc','').strip()
+        flag = request.form.get('flag','').strip()
         if room:
             with sqlite3.connect(DB) as conn:
                 c = conn.cursor()
-                c.execute('INSERT INTO rooms (name,created_by) VALUES (?,?)', (room, session.get('user')))
+                c.execute('INSERT INTO rooms (name,desc,flag,created_by) VALUES (?,?,?,?)', (room,desc,flag, session.get('user')))
                 conn.commit()
     with sqlite3.connect(DB) as conn:
         c = conn.cursor()
@@ -101,21 +106,21 @@ def rooms():
 def chat(room):
     if 'user' not in session:
         return redirect(url_for('index'))
-    return render_template('chat.html', room=room, user=session.get('user'))
+    return render_template('chat.html', room=room, user=session.get('user'), role=session.get('role'))
 
-# API to list messages for a room (optional persistence)
 @app.route('/api/messages/<room>')
 def api_messages(room):
     with sqlite3.connect(DB) as conn:
         c = conn.cursor()
-        c.execute('SELECT user, content, time FROM messages WHERE room=? ORDER BY id ASC', (room,))
+        c.execute('SELECT user, role, content, time FROM messages WHERE room=? ORDER BY id ASC', (room,))
         rows = c.fetchall()
-    return jsonify([{'user':r[0],'content':r[1],'time':r[2]} for r in rows])
+    return jsonify([{'user':r[0],'role':r[1],'content':r[2],'time':r[3]} for r in rows])
 
 @socketio.on('join')
 def on_join(data):
     room = data.get('room')
     user = data.get('user')
+    role = data.get('role','user')
     join_room(room)
     send({'type':'notice','msg':f"{user} دخل الغرفة"}, to=room)
 
@@ -123,13 +128,13 @@ def on_join(data):
 def on_chat(data):
     room = data.get('room')
     user = data.get('user')
+    role = data.get('role','user')
     msg = data.get('msg')
-    # save to DB
     with sqlite3.connect(DB) as conn:
         c = conn.cursor()
-        c.execute('INSERT INTO messages (room,user,content) VALUES (?,?,?)', (room, user, msg))
+        c.execute('INSERT INTO messages (room,user,role,content) VALUES (?,?,?,?)', (room, user, role, msg))
         conn.commit()
-    send({'type':'message','user':user,'msg':msg}, to=room)
+    send({'type':'message','user':user,'role':role,'msg':msg}, to=room)
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
