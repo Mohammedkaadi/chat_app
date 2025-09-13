@@ -4,60 +4,60 @@
   <div class="col-md-4">
     <div class="card p-3">
       <h5>{{ room }}</h5>
-      <div class="text-muted">أنت: <strong>{{ user }}</strong></div>
-      <hr>
-      <div id="usersList"><small class="text-muted">قائمة الأعضاء غير مفعلة في هذه النسخة التجريبية</small></div>
+      <div id="usersList"></div>
     </div>
   </div>
   <div class="col-md-8">
     <div class="card p-3">
       <div id="messages" class="messages" style="height:420px;overflow:auto;"></div>
-      <div class="toolbar d-flex gap-2 align-items-center mt-2">
-        <button class="btn btn-light"><i class="fa-solid fa-microphone"></i></button>
-        <button class="btn btn-light"><i class="fa-solid fa-video"></i></button>
-        <button class="btn btn-light"><i class="fa-solid fa-plus"></i></button>
-        <input id="msg" class="form-control" placeholder="اكتب رسالة">
+      <div class="d-flex mt-2">
+        <input id="msg" class="form-control me-2" placeholder="اكتب رسالة">
         <button id="sendBtn" class="btn btn-primary">إرسال</button>
       </div>
     </div>
   </div>
 </div>
 
-<script src="https://cdn.socket.io/4.6.1/socket.io.min.js" crossorigin="anonymous"></script>
+<audio id="msgSound" src="{{ url_for('static', filename='ding.mp3') }}"></audio>
+
+<script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
 <script>
-  const socket = io();
-  const room = "{{ room }}";
-  const user = "{{ user }}";
-  const role = "{{ role if role else 'user' }}";
-  const messagesDiv = document.getElementById('messages');
-  socket.emit('join', {room: room, user: user, role: role});
+const socket = io();
+const room = "{{ room }}";
+const user = "{{ user }}";
+const role = "{{ role if role else 'user' }}";
+const soundEnabled = "{{ session.get('sound','on') }}" === "on";
+const messagesDiv = document.getElementById('messages');
+const usersList = document.getElementById('usersList');
+const msgSound = document.getElementById('msgSound');
 
-  socket.on('message', function(data){
-    if(data.type === 'notice'){
-      messagesDiv.innerHTML += `<div class="notice">${data.msg}</div>`;
-    } else if(data.type === 'message'){
-      const isMe = data.user === user;
-      const cls = isMe ? 'bubble me' : 'bubble other';
-      messagesDiv.innerHTML += `<div class="${cls}"><div class="meta"><strong>${data.user}</strong> <span class="role">${data.role==='admin'?'👑':''}</span></div><div class="text">${data.msg}</div></div>`;
-    }
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-  });
+socket.emit('join', {room: room, user: user, role: role});
 
-  document.getElementById('sendBtn').addEventListener('click', function(){
-    const msg = document.getElementById('msg').value;
-    if(!msg) return;
-    socket.emit('chat', {room: room, user: user, role: role, msg: msg});
-    document.getElementById('msg').value = '';
-  });
+socket.on('message', function(data){
+  if(data.type === 'notice'){
+    messagesDiv.innerHTML += `<div class="text-muted small">${data.msg}</div>`;
+  } else if(data.type === 'message'){
+    const isMe = data.user === user;
+    const cls = isMe ? 'text-end text-primary' : 'text-start';
+    messagesDiv.innerHTML += `<div class="${cls}"><strong>${data.user}</strong>: ${data.msg}</div>`;
+    if(!isMe && soundEnabled){ msgSound.play(); }
+  }
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+});
 
-  // load history
-  fetch('/api/messages/' + encodeURIComponent(room)).then(r=>r.json()).then(list=>{
-    list.forEach(it=>{
-      const isMe = it.user === user;
-      const cls = isMe ? 'bubble me' : 'bubble other';
-      messagesDiv.innerHTML += `<div class="${cls}"><div class="meta"><strong>${it.user}</strong> <span class="role">${it.role==='admin'?'👑':''}</span></div><div class="text">${it.content}</div></div>`;
-    });
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+socket.on('user_list', function(users){
+  usersList.innerHTML = '<h6>المتصلون:</h6><ul>';
+  users.forEach(u=>{
+    usersList.innerHTML += `<li>🟢 ${u}</li>`;
   });
+  usersList.innerHTML += '</ul>';
+});
+
+document.getElementById('sendBtn').addEventListener('click', function(){
+  const msg = document.getElementById('msg').value;
+  if(!msg) return;
+  socket.emit('chat', {room: room, user: user, role: role, msg: msg});
+  document.getElementById('msg').value = '';
+});
 </script>
 {% endblock %}
