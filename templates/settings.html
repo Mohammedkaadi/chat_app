@@ -1,14 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
-<h4>الإعدادات</h4>
-<form method="post" class="card p-3">
+<h3>الإعدادات</h3>
+<form method="post">
   <div class="mb-2">
     <label class="form-label">اسم العرض</label>
     <input name="name" value="{{ user }}" class="form-control">
-  </div>
-  <div class="mb-2">
-    <label class="form-label">الحالة الشخصية</label>
-    <input name="status" value="{{ info[3] if info }}" class="form-control" placeholder="مثال: مشغول، متاح...">
   </div>
   <button class="btn btn-primary">حفظ</button>
 </form>
