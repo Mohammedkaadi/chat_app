@@ -3,15 +3,8 @@
 <h3>الإعدادات</h3>
 <form method="post">
   <div class="mb-2">
-    <label class="form-label">اسم المستخدم</label>
+    <label class="form-label">اسم العرض</label>
     <input name="name" value="{{ user }}" class="form-control">
-  </div>
-  <div class="mb-2">
-    <label class="form-label">الأصوات</label>
-    <select name="sound" class="form-select">
-      <option value="on" {% if sound=='on' %}selected{% endif %}>مفعلة</option>
-      <option value="off" {% if sound=='off' %}selected{% endif %}>معطلة</option>
-    </select>
   </div>
   <button class="btn btn-primary">حفظ</button>
 </form>
