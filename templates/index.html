@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row">
+  <div class="col-md-6">
+    <div class="card p-3">
+      <h4>دخول الزوار</h4>
+      {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
+      {% if message %}<div class="alert alert-success">{{ message }}</div>{% endif %}
+      <form method="post">
+        <input name="name" class="form-control my-2" placeholder="اكتب اسمك">
+        <button name="login_user" class="btn btn-primary w-100">دخول كزائر</button>
+      </form>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card p-3">
+      <h4>دخول المدير</h4>
+      <form method="post">
+        <input name="email" class="form-control my-2" placeholder="الإيميل">
+        <input name="password" type="password" class="form-control my-2" placeholder="كلمة المرور">
+        <button name="login_admin" class="btn btn-warning w-100">دخول المدير</button>
+      </form>
+      <hr>
+      <h5>تسجيل مدير جديد (مرة واحدة)</h5>
+      <form method="post">
+        <input name="name" class="form-control my-2" placeholder="الاسم">
+        <input name="email" class="form-control my-2" placeholder="الايميل">
+        <input name="password" class="form-control my-2" placeholder="كلمة المرور">
+        <button name="register_admin" class="btn btn-success w-100">تسجيل مدير</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
