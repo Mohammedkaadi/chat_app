@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>الغرف المتاحة</h3>
+<div class="row">
+  {% for r in rooms %}
+    <div class="col-md-4">
+      <div class="card mb-3 p-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <div class="h5">{{ r[1] }}</div>
+            <div class="text-muted small">أنشئت بواسطة: {{ r[2] }}</div>
+          </div>
+          <a href="{{ url_for('chat', room=r[1]) }}" class="btn btn-sm btn-primary">انضمام</a>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <div class="col-12"><div class="alert alert-info">لا توجد غرف حتى الآن</div></div>
+  {% endfor %}
+</div>
+{% endblock %}

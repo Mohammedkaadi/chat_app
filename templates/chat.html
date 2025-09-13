@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row">
+  <div class="col-md-4">
+    <div class="card p-3">
+      <h5>الغرفة: {{ room }}</h5>
+      <div class="text-muted">أنت: <strong>{{ user }}</strong></div>
+      <hr>
+      <div id="usersList"></div>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <div class="card p-3">
+      <div id="messages" style="height:400px;overflow:auto;"></div>
+      <div class="d-flex gap-2 mt-2">
+        <input id="msg" class="form-control" placeholder="اكتب رسالتك">
+        <button id="sendBtn" class="btn btn-primary">إرسال</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.socket.io/4.6.1/socket.io.min.js" integrity="" crossorigin="anonymous"></script>
+<script>
+  const socket = io();
+  const room = "{{ room }}";
+  const user = "{{ user }}";
+  const messagesDiv = document.getElementById('messages');
+  socket.emit('join', {room: room, user: user});
+
+  socket.on('message', function(data){
+    if(data.type === 'notice'){
+      messagesDiv.innerHTML += `<div class="text-muted small my-1">${data.msg}</div>`;
+    } else if(data.type === 'message'){
+      messagesDiv.innerHTML += `<div class="p-2 my-1 rounded bg-white"><strong>${data.user}</strong>: ${data.msg}</div>`;
+    }
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  });
+
+  document.getElementById('sendBtn').addEventListener('click', function(){
+    const msg = document.getElementById('msg').value;
+    if(!msg) return;
+    socket.emit('chat', {room: room, user: user, msg: msg});
+    document.getElementById('msg').value = '';
+  });
+
+  // load history (optional)
+  fetch('/api/messages/' + encodeURIComponent(room)).then(r=>r.json()).then(list=>{
+    list.forEach(it=>{
+      messagesDiv.innerHTML += `<div class="p-2 my-1 rounded bg-white"><strong>${it.user}</strong>: ${it.content}</div>`;
+    });
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  });
+</script>
+{% endblock %}
