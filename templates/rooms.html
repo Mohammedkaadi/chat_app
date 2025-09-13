@@ -3,17 +3,17 @@
 <h4>قائمة الغرف</h4>
 <div class="mt-2">
   {% for r in rooms %}
-    <div class="room-card">
-      <div>
-        <div class="fw-bold">{{ r[1] }}</div>
-        <div class="text-muted small">{{ r[2] }}</div>
-      </div>
-      <div>
-        <a class="btn btn-sm btn-primary" href="{{ url_for('chat', room=r[1]) }}">انضمام</a>
-      </div>
+  <div class="room-card d-flex justify-content-between align-items-center">
+    <div>
+      <div class="fw-bold">{{ r[1] }}</div>
+      <div class="text-muted small">{{ r[2] }}</div>
     </div>
+    <div>
+      <a href="{{ url_for('chat', room=r[1]) }}" class="btn btn-primary btn-sm">انضمام</a>
+    </div>
+  </div>
   {% else %}
-    <div class="alert alert-info">لا توجد غرف حتى الآن</div>
+  <div class="alert alert-info">لا توجد غرف حتى الآن</div>
   {% endfor %}
 </div>
 {% endblock %}
