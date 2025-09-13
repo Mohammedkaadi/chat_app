@@ -1,19 +1,38 @@
-{% extends 'base.html' %}
-{% block content %}
-<h4>قائمة الغرف</h4>
-<div class="mt-2">
-  {% for r in rooms %}
-  <div class="room-card d-flex justify-content-between align-items-center">
-    <div>
-      <div class="fw-bold">{{ r[1] }}</div>
-      <div class="text-muted small">{{ r[2] }}</div>
-    </div>
-    <div>
-      <a href="{{ url_for('chat', room=r[1]) }}" class="btn btn-primary btn-sm">انضمام</a>
-    </div>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>الغرف - Star2Chat</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🌟 Star2Chat</h1>
+      <div class="user-info">
+        <span>مرحباً، {{ user }}</span>
+        <a href="{{ url_for('logout') }}" class="logout">🚪 خروج</a>
+      </div>
+    </header>
+
+    <main>
+      <h2>الغرف المتاحة</h2>
+      <ul class="room-list">
+        {% for room in rooms %}
+          <li>
+            <a href="{{ url_for('chat', room=room[1]) }}">
+              🗨️ {{ room[1] }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+
+      {% if role == "admin" %}
+      <div class="admin-panel">
+        <a href="{{ url_for('admin') }}" class="btn">⚙️ لوحة الإدارة</a>
+      </div>
+      {% endif %}
+    </main>
   </div>
-  {% else %}
-  <div class="alert alert-info">لا توجد غرف حتى الآن</div>
-  {% endfor %}
-</div>
-{% endblock %}
+</body>
+</html>
