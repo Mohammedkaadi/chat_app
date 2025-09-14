@@ -1,64 +1,36 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>{{ title if title else 'Star2Chat' }}</title>
-  
-  <!-- Bootstrap RTL -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body class="bg-light">
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background:linear-gradient(90deg,#5eead4,#60a5fa);">
-    <div class="container-fluid">
-      <a class="navbar-brand fw-bold" href="{{ url_for('rooms') }}">
-        <i class="fa-solid fa-comments"></i> Star2Chat
-      </a>
-      {% if session.get('user') %}
-      <div class="d-flex align-items-center">
-        <span class="me-3 text-dark fw-semibold">
-          👋 مرحباً، <strong>{{ session.get('user') }}</strong>
-        </span>
-        <a href="{{ url_for('settings') }}" class="btn btn-sm btn-outline-dark me-2" title="الإعدادات">
-          <i class="fa-solid fa-gear"></i>
-        </a>
-        <a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline-dark" title="خروج">
-          <i class="fa-solid fa-right-from-bracket"></i>
-        </a>
-      </div>
-      {% endif %}
-    </div>
-  </nav>
 
-  <!-- Main Content -->
-  <div class="container my-4">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for cat,msg in messages %}
-          <div class="alert alert-{{ 'success' if cat=='success' else 'danger' }} alert-dismissible fade show" role="alert">
-            <i class="fa-solid {{ 'fa-circle-check' if cat=='success' else 'fa-triangle-exclamation' }}"></i>
-            {{ msg }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="إغلاق"></button>
-          </div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-    {% block content %}{% endblock %}
-  </div>
-
-  <!-- Footer -->
-  <footer class="text-center py-3 mt-auto bg-white border-top">
-    <small class="text-muted">
-      &copy; {{ now().year if now else '2025' }} Star2Chat — جميع الحقوق محفوظة
-    </small>
-  </footer>
-
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<html lang="ar" dir="rtl">  
+<head>  
+  <meta charset="utf-8">  
+  <meta name="viewport" content="width=device-width,initial-scale=1">  
+  <title>{{ title if title else 'Star2Chat' }}</title>  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">  
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">  
+</head>  
+<body>  
+<nav class="navbar navbar-light" style="background:linear-gradient(90deg,#5eead4,#60a5fa);">  
+  <div class="container-fluid">  
+    <a class="navbar-brand fw-bold" href="{{ url_for('rooms') }}">Star2Chat</a>  
+    {% if session.get('user') %}  
+    <div>  
+      <span class="me-3">مرحباً، <strong>{{ session.get('user') }}</strong></span>  
+      <a href="{{ url_for('settings') }}" class="btn btn-sm btn-outline-dark">⚙</a>  
+      <a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline-dark">خروج</a>  
+    </div>  
+    {% endif %}  
+  </div>  
+</nav>  
+<div class="container my-3">  
+  {% with messages = get_flashed_messages(with_categories=true) %}  
+    {% if messages %}  
+      {% for cat,msg in messages %}  
+        <div class="alert alert-{{ 'success' if cat=='success' else 'danger' }}">{{ msg }}</div>  
+      {% endfor %}  
+    {% endif %}  
+  {% endwith %}  
+  {% block content %}{% endblock %}  
+</div>  
+</body>  
+</html>  
