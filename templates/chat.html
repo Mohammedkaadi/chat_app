@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}غرفة {{ room.name }}{% endblock %}
+{% block head %}
+  <script>const ROOM='{{ room.slug }}'; const USER='{{ user.username }}';</script>
+{% endblock %}
+{% block content %}
+<h2>غرفة: {{ room.name }}</h2>
+<div id="messages" class="chat-box">
+  {% for m in messages %}
+    <div class="msg"><strong>{{ m.user.username }}</strong>: {{ m.text }}</div>
+  {% endfor %}
+</div>
+<div class="chat-input">
+  <input id="msg_input" placeholder="اكتب رسالة...">
+  <button id="send_btn">إرسال</button>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+{% endblock %}
