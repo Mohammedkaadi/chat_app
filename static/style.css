@@ -1,7 +1,0 @@
-/* Custom styles on top of Tailwind for the blue-purple theme */
-.hero{background: linear-gradient(135deg, rgba(99,102,241,0.9), rgba(139,92,246,0.9)); padding:64px 0; border-radius:12px; box-shadow:0 10px 30px rgba(2,6,23,0.25)}
-.btn-main{display:inline-block;background:linear-gradient(90deg,#3b82f6,#8b5cf6);color:white;padding:12px;border-radius:10px;font-weight:600}
-.btn-secondary{display:inline-block;border:2px solid rgba(255,255,255,0.18);color:white;padding:12px;border-radius:10px}
-.btn-outline{display:inline-block;background:transparent;border:2px solid rgba(255,255,255,0.18);color:white;padding:12px;border-radius:10px}
-.feature-card{background:white;padding:20px;border-radius:12px;text-align:center}
-.feature-card .icon{font-size:28px;margin-bottom:8px}
