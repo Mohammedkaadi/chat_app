@@ -1,0 +1,13 @@
+    {% extends 'base.html' %}
+{% block title %}إعداد المدير{% endblock %}
+{% block content %}
+<div class="max-w-md mx-auto bg-white rounded-xl p-6 mt-8">
+  <h3 class="text-lg font-semibold mb-4">إعداد المدير (مرة واحدة)</h3>
+  <form method="post" class="space-y-3">
+    <input name="username" placeholder="اسم المدير" class="w-full p-3 border rounded" required>
+    <input name="email" placeholder="البريد الإلكتروني (اختياري)" class="w-full p-3 border rounded">
+    <input name="password" type="password" placeholder="كلمة المرور" class="w-full p-3 border rounded" required>
+    <button class="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 rounded">إنشاء المدير</button>
+  </form>
+</div>
+{% endblock %}

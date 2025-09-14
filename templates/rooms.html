@@ -1,0 +1,27 @@
+    {% extends 'base.html' %}
+{% block title %}الغرف{% endblock %}
+{% block content %}
+<div class="mt-6 grid md:grid-cols-3 gap-4">
+  <div class="col-span-2">
+    <h2 class="text-xl font-semibold mb-3 text-white">الغرف المتاحة</h2>
+    <div class="space-y-3">
+      {% for r in rooms %}
+      <div class="bg-white p-4 rounded shadow flex justify-between items-center">
+        <div>
+          <h4 class="font-medium">{{ r.name }}</h4>
+          <p class="text-sm text-gray-500">{{ r.country or 'عام' }} • {{ r.type }}</p>
+        </div>
+        <a href="{{ url_for('room_view', slug=r.slug) }}" class="px-3 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded">ادخل</a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  <aside class="bg-white p-4 rounded shadow">
+    <h3 class="font-semibold mb-2">سريع</h3>
+    {% if current_user() and current_user().role == 'admin' %}
+      <a href="{{ url_for('admin_panel') }}" class="block bg-yellow-400 text-white py-2 rounded mb-2 text-center">لوحة الإدارة</a>
+    {% endif %}
+    <p class="text-sm text-gray-500">انضم لغرفة للدردشة.</p>
+  </aside>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+    {% extends 'base.html' %}
+{% block title %}غرفة {{ room.name }}{% endblock %}
+{% block head %}
+<script>const ROOM='{{ room.slug }}'; const USER='{{ user.username }}';</script>
+{% endblock %}
+{% block content %}
+<div class="bg-white rounded-xl shadow p-4 mt-6">
+  <h3 class="font-semibold mb-2">غرفة: {{ room.name }}</h3>
+  <div id="messages" class="h-72 overflow-auto border rounded p-3 bg-gray-50"></div>
+  <div class="flex gap-2 mt-3">
+    <input id="msg_input" class="flex-1 p-2 border rounded" placeholder="اكتب رسالة...">
+    <button id="send_btn" class="px-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded">إرسال</button>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+{% endblock %}
