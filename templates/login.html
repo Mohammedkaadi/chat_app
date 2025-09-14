@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block title %}تسجيل الدخول{% endblock %}
+{% block content %}
+<form action="/login" method="POST" class="login-form">
+  <input type="text" name="username" placeholder="ادخل اسمك" required>
+  <button type="submit">دخول</button>
+</form>
+{% endblock %}
