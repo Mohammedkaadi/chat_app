@@ -1,0 +1,10 @@
+/* small custom fixes on top of Tailwind */
+.container{max-width:900px}
+.card{background:white;padding:18px;border-radius:12px;box-shadow:0 10px 30px rgba(2,6,23,0.06)}
+.btn{background:#06b6d4;color:white;padding:8px 12px;border-radius:8px}
+.rooms-grid{display:flex;flex-direction:column;gap:12px}
+.room-card{background:white;padding:12px;border-radius:10px;display:flex;justify-content:space-between;align-items:center}
+.chat-box{height:50vh;overflow:auto;background:white;padding:10px;border-radius:8px;border:1px solid #eee}
+.chat-input{display:flex;gap:8px;margin-top:8px}
+.chat-input input{flex:1;padding:10px;border-radius:8px;border:1px solid #ddd}
+.admin-grid{display:grid;grid-template-columns:1fr 360px;gap:12px}
