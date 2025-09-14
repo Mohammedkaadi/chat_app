@@ -1,54 +1,32 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container my-5">
-  <div class="card shadow-lg p-4 rounded-4">
-    <h3 class="text-center mb-4">👋 مرحباً بك في <span class="text-primary">Star2Chat</span></h3>
-    
-    <div class="row">
-      <!-- دخول الزوار -->
-      <div class="col-md-6 mb-4">
-        <div class="card border-success shadow-sm h-100">
-          <div class="card-body">
-            <h5 class="card-title text-success">دخول الزوار</h5>
-            <form method="post">
-              {% csrf_token %}
-              <input name="name" class="form-control my-2" placeholder="اكتب اسمك">
-              <button name="login_user" class="btn btn-success w-100">
-                🚀 دخول كزائر
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
 
-      <!-- دخول المدير + تسجيل -->
-      <div class="col-md-6 mb-4">
-        <div class="card border-warning shadow-sm h-100">
-          <div class="card-body">
-            <h5 class="card-title text-warning">دخول المدير</h5>
-            <form method="post">
-              {% csrf_token %}
-              <input name="email" class="form-control my-2" placeholder="الإيميل">
-              <input name="password" type="password" class="form-control my-2" placeholder="كلمة المرور">
-              <button name="login_admin" class="btn btn-warning w-100">
-                🔑 دخول المدير
-              </button>
-            </form>
-            <hr>
-            <h6 class="text-secondary">تسجيل مدير جديد</h6>
-            <form method="post">
-              {% csrf_token %}
-              <input name="name" class="form-control my-2" placeholder="الاسم">
-              <input name="email" class="form-control my-2" placeholder="الإيميل">
-              <input name="password" type="password" class="form-control my-2" placeholder="كلمة المرور">
-              <button name="register_admin" class="btn btn-primary w-100">
-                ➕ تسجيل
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+<div class="card p-3">  
+  <h4>مرحباً في Star2Chat</h4>  
+  <div class="row">  
+    <div class="col-md-6">  
+      <h5>دخول الزوار</h5>  
+      <form method="post">  
+        <input name="name" class="form-control my-2" placeholder="اكتب اسمك">  
+        <button name="login_user" class="btn btn-success w-100">دخول كزائر</button>  
+      </form>  
+    </div>  
+    <div class="col-md-6">  
+      <h5>دخول المدير</h5>  
+      <form method="post">  
+        <input name="email" class="form-control my-2" placeholder="الايميل">  
+        <input name="password" type="password" class="form-control my-2" placeholder="كلمة المرور">  
+        <button name="login_admin" class="btn btn-warning w-100">دخول المدير</button>  
+      </form>  
+      <hr>  
+      <h6>تسجيل مدير جديد</h6>  
+      <form method="post">  
+        <input name="name" class="form-control my-2" placeholder="الاسم">  
+        <input name="email" class="form-control my-2" placeholder="الايميل">  
+        <input name="password" type="password" class="form-control my-2" placeholder="كلمة المرور">  
+        <button name="register_admin" class="btn btn-primary w-100">تسجيل</button>  
+      </form>  
+    </div>  
+  </div>  
+</div>  
 {% endblock %}
