@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}تسجيل مستخدم جديد{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>تسجيل/دخول كزائر</h2>
+  <form method="POST" action="{{ url_for('register') }}">
+    <input name="username" placeholder="اسمك (ظاهر للمستخدمين)" required>
+    <input name="password" placeholder="كلمة المرور (اختياري)">
+    <button type="submit">سجل وادخل</button>
+  </form>
+</div>
+{% endblock %}

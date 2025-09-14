@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}إعداد المدير{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>إعداد حساب المدير (مرة واحدة)</h2>
+  <form method="POST">
+    <input name="email" placeholder="البريد الإلكتروني (اختياري)">
+    <input name="username" placeholder="اسم المدير" required>
+    <input name="password" placeholder="كلمة المرور" type="password" required>
+    <button type="submit">إنشاء المدير</button>
+  </form>
+  <p class="muted">بعد إنشاء المدير، الصفحة هذه ستختفي.</p>
+</div>
+{% endblock %}

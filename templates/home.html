@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Star2Chat - Home{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>مرحبا في Star2Chat</h2>
+  <p>سجّل دخولك أو ادخل كزائر.</p>
+  <div style="display:flex;gap:8px"><a class="btn" href="{{ url_for('login') }}">دخول</a><a class="btn" href="{{ url_for('register') }}">سجل/زائر</a></div>
+</div>
+{% endblock %}
