@@ -1,1 +1,19 @@
 
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>تسجيل الدخول - Star2Chat</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="login-container">
+    <h1>🌟 Star2Chat</h1>
+    <form action="{{ url_for('login') }}" method="POST">
+      <input type="text" name="username" placeholder="ادخل اسمك" required>
+      <input type="password" name="password" placeholder="كلمة مرور (للإدارة فقط)">
+      <button type="submit">🚀 دخول</button>
+    </form>
+  </div>
+</body>
+</html>
